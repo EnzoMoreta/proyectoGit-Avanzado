@@ -1,0 +1,23 @@
+name: Comprobar Tokens Dev
+
+on: [push]
+
+jobs:
+  verificar-token:
+    runs-on: self-hosted
+    
+    steps:
+      - name: Comparar Secret de GitHub con Variable Local
+        env:
+          GITHUB_SECRET: ${{ secrets.DEV_TOKEN }}
+          LOCAL_VAR: ${{ env.LOCAL_DEV_TOKEN }}
+        run: |
+          echo "Valor del Secret de GitHub: $env:GITHUB_SECRET"
+          echo "Valor de la Variable Local: $env:LOCAL_VAR"
+          
+          if ("$env:GITHUB_SECRET" -eq "$env:LOCAL_VAR") {
+              Write-Host "¡Los tokens COINCIDEN perfectamente!" -ForegroundColor Green
+          } else {
+              Write-Host "¡Los tokens NO coinciden!" -ForegroundColor Red
+              exit 1
+          }
