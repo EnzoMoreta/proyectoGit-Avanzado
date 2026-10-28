@@ -5,19 +5,27 @@ on: [push]
 jobs:
   verificar-token:
     runs-on: self-hosted
-    
     steps:
       - name: Comparar Secret de GitHub con Variable Local
         env:
           GITHUB_SECRET: ${{ secrets.DEV_TOKEN }}
-          LOCAL_VAR: ${{ env.LOCAL_DEV_TOKEN }}
+          LOCAL_DEV_TOKEN: ${{ env.LOCAL_DEV_TOKEN }}
+        shell: powershell
         run: |
-          echo "Valor del Secret de GitHub: $env:GITHUB_SECRET"
-          echo "Valor de la Variable Local: $env:LOCAL_VAR"
-          
-          if ("$env:GITHUB_SECRET" -eq "$env:LOCAL_VAR") {
-              Write-Host "¡Los tokens COINCIDEN perfectamente!" -ForegroundColor Green
+          $localToken = $env:LOCAL_DEV_TOKEN
+          if ([string]::IsNullOrEmpty($localToken)) {
+            $localToken = [System.Environment]::GetEnvironmentVariable("LOCAL_DEV_TOKEN", "User")
+          }
+          if ([string]::IsNullOrEmpty($localToken)) {
+            $localToken = [System.Environment]::GetEnvironmentVariable("LOCAL_DEV_TOKEN", "Machine")
+          }
+
+          Write-Host "Valor del Secret de GitHub: $env:GITHUB_SECRET"
+          Write-Host "Valor de la Variable Local: $localToken"
+
+          if ("$env:GITHUB_SECRET" -eq "$localToken") {
+            Write-Host "¡Los tokens coinciden correctamente!"
           } else {
-              Write-Host "¡Los tokens NO coinciden!" -ForegroundColor Red
-              exit 1
+            Write-Host "¡Los tokens NO coinciden!"
+            exit 1
           }
