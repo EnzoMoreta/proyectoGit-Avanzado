@@ -1,11 +1,8 @@
 <<<<<<< HEAD
 name: CI Pipeline
-
 on:
   push:
-    branches: [ develop ]
-  pull_request:
-    branches: [ develop ]
+    branches: [ main, develop ]
 
 jobs:
   updatereadme:
