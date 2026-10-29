@@ -22,13 +22,12 @@ jobs:
       - name: Comprobar token prod
         env:
           TOKEN_GITHUB: ${{ secrets.PROD_TOKEN }}
-          TOKEN_LOCAL: ${{ env.LOCAL_PROD_TOKEN }}
         shell: powershell
         run: |
-          if ("$env:TOKEN_GITHUB" -eq "$env:TOKEN_LOCAL") {
+          $tokenLocal = [System.Environment]::GetEnvironmentVariable("LOCAL_PROD_TOKEN", "Machine")
+          if ("$env:TOKEN_GITHUB" -eq "$tokenLocal") {
               Write-Host "Tokens correctos"
           } else {
               Write-Host "Error en tokens"
               exit 1
           }
-# cambio manual limpio
