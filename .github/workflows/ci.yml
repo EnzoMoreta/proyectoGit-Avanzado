@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 name: CI Pipeline
 
 on:
@@ -31,3 +32,32 @@ jobs:
 
       - name: Validate environment
         run: echo "Validando entorno de desarrollo..."
+=======
+name: CI Dev
+
+on: [push]
+
+jobs:
+  actualizar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: echo "Feature añadida" >> README.md && git config --global user.name "bot" && git config --global user.email "bot@bot.com" && git commit -am "update" && git push
+
+  validar:
+    needs: actualizar
+    runs-on: self-hosted
+    steps:
+      - name: Comprobar token dev
+        env:
+          TOKEN_GITHUB: ${{ secrets.DEV_TOKEN }}
+          TOKEN_LOCAL: ${{ env.LOCAL_DEV_TOKEN }}
+        shell: powershell
+        run: |
+          if ("$env:TOKEN_GITHUB" -eq "$env:TOKEN_LOCAL") {
+              Write-Host "Tokens correctos"
+          } else {
+              Write-Host "Error en tokens"
+              exit 1
+          }
+>>>>>>> 58d6135 (Añadir archivo cd.yml)

@@ -1,0 +1,27 @@
+name: CD Prod
+
+on: [push]
+
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: echo "AppVersion-1" >> README.md && git config --global user.name "bot" && git config --global user.email "bot@bot.com" && git commit -am "bump version" && git push
+
+  validar:
+    needs: version
+    runs-on: self-hosted
+    steps:
+      - name: Comprobar token prod
+        env:
+          TOKEN_GITHUB: ${{ secrets.PROD_TOKEN }}
+          TOKEN_LOCAL: ${{ env.LOCAL_PROD_TOKEN }}
+        shell: powershell
+        run: |
+          if ("$env:TOKEN_GITHUB" -eq "$env:TOKEN_LOCAL") {
+              Write-Host "Tokens correctos"
+          } else {
+              Write-Host "Error en tokens"
+              exit 1
+          }
