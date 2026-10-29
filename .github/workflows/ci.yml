@@ -7,7 +7,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run: echo "Feature añadida" >> README.md && git config --global user.name "bot" && git config --global user.email "bot@bot.com" && git commit -am "update" && git push
+      - run: |
+    		echo "Feature añadida" >> README.md
+    		git config --global user.name "bot"
+    		git config --global user.email "bot@bot.com"
+    		git commit -am "update"
+    		git pull origin main --rebase || true
+    		git push origin main
 
   validar:
     needs: actualizar
